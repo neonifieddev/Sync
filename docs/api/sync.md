@@ -5,23 +5,49 @@ slug: /api/Sync
 
 Basic networking module for creating and handling static `RemoteEvent`s and `RemoteFunction`s (paired per endpoint name), with **rate limiting** and **payload byte limiting**.
 
-## One shared remote folder (important)
+## One shared “Remotes” module (important)
 
-To avoid mismatched endpoint names between server and client, define your endpoints in **one shared module** that both realms can `require()`.
+You typically want **one shared module that defines all endpoints** and is `require()`’d by both server and client.
 
-Typically:
+That shared module returns a table of endpoints:
 
-- Put that shared “Remotes” module somewhere both can access (e.g. `ReplicatedStorage.Shared.Remotes`).
-- Put the `Sync` module somewhere both can `require()` (commonly `ReplicatedStorage.Packages.Sync`).
+```lua
+-- ReplicatedStorage/Shared/Remotes.luau
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Sync = require(ReplicatedStorage.Packages.Sync)
 
-All endpoints share the same container:
+return {
+	Ping = Sync:Create("Ping"),
+}
+```
 
-- `ReplicatedStorage.Remotes`
+Client usage:
 
-For each `Sync:Create("X")`:
+```lua
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = require(ReplicatedStorage.Shared.Remotes)
 
-- RemoteEvent: `ReplicatedStorage.Remotes.X`
-- RemoteFunction: `ReplicatedStorage.Remotes.XFunction`
+Remotes.Ping:OnEvent(function(...)
+	print("Got", ...)
+end)
+
+Remotes.Ping:FireServer("hello")
+```
+
+Server usage:
+
+```lua
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = require(ReplicatedStorage.Shared.Remotes)
+
+Remotes.Ping:OnEvent(function(player, ...)
+	print("From", player.Name, ...)
+end)
+
+Remotes.Ping:FireClient(player, "hi")
+```
+
+Under the hood, Sync stores the actual Roblox instances under `ReplicatedStorage.Remotes` (one `RemoteEvent` + one `RemoteFunction` per endpoint name).
 
 ## Quick example (examples only)
 

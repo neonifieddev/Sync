@@ -44,17 +44,45 @@
           <strong>Examples only:</strong> this page uses generic examples (no app-specific remote registries).
         </div>
 
-        <h2>One shared remote folder</h2>
+        <h2>One shared “Remotes” module</h2>
         <p>
-          Define your endpoints in <strong>one shared “Remotes” module</strong> required by both server and client, so
-          endpoint names stay consistent. All endpoints share: <code>ReplicatedStorage.Remotes</code>.
+          The recommended pattern is to define your endpoints in <strong>one shared module</strong> that both server and
+          client <code>require()</code>. Your game code should interact with <code>Remotes.Ping</code>, not
+          <code>ReplicatedStorage.Remotes</code> directly.
         </p>
-        <p>For each <code>Sync:Create("X")</code>:</p>
-        <ul>
-          <li><strong>RemoteEvent</strong>: <code>ReplicatedStorage.Remotes.X</code></li>
-          <li><strong>UnreliableRemoteEvent</strong>: <code>ReplicatedStorage.Remotes.XUnreliable</code></li>
-          <li><strong>RemoteFunction</strong>: <code>ReplicatedStorage.Remotes.XFunction</code></li>
-        </ul>
+
+        <pre><code class="language-lua">-- ReplicatedStorage/Shared/Remotes.luau
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Sync = require(ReplicatedStorage.Packages.Sync)
+
+return {
+  Ping = Sync:Create("Ping"),
+}</code></pre>
+
+        <h3>Client usage</h3>
+        <pre><code class="language-lua">local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = require(ReplicatedStorage.Shared.Remotes)
+
+Remotes.Ping:OnEvent(function(...)
+  print("Got", ...)
+end)
+
+Remotes.Ping:FireServer("hello")</code></pre>
+
+        <h3>Server usage</h3>
+        <pre><code class="language-lua">local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = require(ReplicatedStorage.Shared.Remotes)
+
+Remotes.Ping:OnEvent(function(player, ...)
+  print("From", player.Name, ...)
+end)
+
+Remotes.Ping:FireClient(player, "hi")</code></pre>
+
+        <p>
+          Under the hood, Sync stores the actual Roblox instances under <code>ReplicatedStorage.Remotes</code> (one
+          <code>RemoteEvent</code> + one <code>RemoteFunction</code> per endpoint name).
+        </p>
 
         <h2>Quick example</h2>
         <pre><code class="language-lua">local ReplicatedStorage = game:GetService("ReplicatedStorage")
