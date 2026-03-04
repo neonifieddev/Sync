@@ -61,12 +61,12 @@ local Ping = Sync:Create("Test.Ping")
   :SetMode(Sync.Modes.Burst)</code></pre>
 
         <h3>Server</h3>
-        <pre><code class="language-lua">Ping:Connect(function(player, message)
+        <pre><code class="language-lua">Ping:OnEvent(function(player, message)
   print("Ping from", player.Name, message)
 end)</code></pre>
 
         <h3>Client</h3>
-        <pre><code class="language-lua">Ping:Fire("hello")</code></pre>
+        <pre><code class="language-lua">Ping:FireServer("hello")</code></pre>
 
         <h2>Recommended pattern: a Remotes module</h2>
         <p>
@@ -92,19 +92,19 @@ return {
         <h3>Server usage</h3>
         <pre><code class="language-lua">local Remotes = require(game:GetService("ReplicatedStorage").Shared.Remotes)
 
-Remotes.Test.Ping:Connect(function(player, message)
+Remotes.Test.Ping:OnEvent(function(player, message)
   print("Ping from", player.Name, message)
 end)</code></pre>
 
         <h3>Client usage</h3>
         <pre><code class="language-lua">local Remotes = require(game:GetService("ReplicatedStorage").Shared.Remotes)
 
-Remotes.Test.Ping:Fire("hello")</code></pre>
+Remotes.Test.Ping:FireServer("hello")</code></pre>
 
         <h2>Unreliable events</h2>
         <p>
           Each Sync endpoint includes both a reliable <code>RemoteEvent</code> and an <code>UnreliableRemoteEvent</code>.
-          Use <code>:Fire(...)</code> for reliable delivery, and <code>:FireUnreliable(...)</code> for high-frequency
+          Use <code>:FireServer(...)</code> for reliable delivery, and <code>:FireUnreliable(...)</code> for high-frequency
           updates where it’s okay to drop packets.
         </p>
 
@@ -115,7 +115,7 @@ Remotes.Test.Ping:Fire("hello")</code></pre>
 Remotes.Movement.Position:FireUnreliable(workspace.CurrentCamera.CFrame)</code></pre>
 
         <h3>Server listen (unreliable)</h3>
-        <pre><code class="language-lua">Remotes.Movement.Position:Connect(function(player, cf)
+        <pre><code class="language-lua">Remotes.Movement.Position:OnEvent(function(player, cf)
   -- cf is a CFrame (or whatever you send)
 end)</code></pre>
       </article>

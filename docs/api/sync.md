@@ -7,6 +7,13 @@ Basic networking module for creating and handling static `RemoteEvent`s and `Rem
 
 > Style inspiration: RbxUtil `Net` docs ([link](https://sleitnick.github.io/RbxUtil/api/Net/)).
 
+> **Naming note:** This docs site uses Roblox-style names:
+>
+> - `:Connect` → `:OnEvent`
+> - `:Fire` → `:FireServer`
+>
+> (Server → client methods remain `:FireAll`, `:FireClient`, etc.)
+
 ## One shared remote folder (important)
 
 You only need **one copy of the Sync module** required by both server and client.
@@ -35,7 +42,7 @@ local PointsChanged = Sync:Create("PointsChanged")
 Client:
 
 ```lua
-PointsChanged:Connect(function(points)
+PointsChanged:OnEvent(function(points)
 	print("Points", points)
 end)
 ```
@@ -111,20 +118,23 @@ Sync.Modes = {
 
 ## Instance Methods
 
-### `Connect`
+### `OnEvent`
 
-`sync:Connect(callback: (...any) -> ()) -> { Disconnect: () -> () }?`
+`sync:OnEvent(callback: (...any) -> ()) -> { Disconnect: () -> () }?`
 
 Connects a handler to the endpoint’s `RemoteEvent`.
 
+- On the **client**, the callback receives only the payload you sent.
+- On the **server**, the callback receives `(player, ...payload)` (Roblox prepends the sender).
+
 ```lua
 -- Client
-sync:Connect(function(...)
+sync:OnEvent(function(...)
 	print("Got", ...)
 end)
 
 -- Server
-sync:Connect(function(player, ...)
+sync:OnEvent(function(player, ...)
 	print("From", player.Name, ...)
 end)
 ```
@@ -142,16 +152,16 @@ sync:OnInvoke(function(player, request)
 end)
 ```
 
-### `Fire`
+### `FireServer`
 
 **Client**
 
-`sync:Fire(...any) -> ()`
+`sync:FireServer(...any) -> ()`
 
 Fires client → server (drops if rate-limited or byte-limited).
 
 ```lua
-sync:Fire("hello")
+sync:FireServer("hello")
 ```
 
 ### `InvokeServer`

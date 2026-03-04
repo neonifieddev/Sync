@@ -68,7 +68,7 @@ local PointsChanged = Sync:Create("PointsChanged")
   :SetMode(Sync.Modes.Burst)</code></pre>
 
         <h3>Client</h3>
-        <pre><code class="language-lua">PointsChanged:Connect(function(points)
+        <pre><code class="language-lua">PointsChanged:OnEvent(function(points)
   print("Points", points)
 end)</code></pre>
 
@@ -103,7 +103,7 @@ return {
         <h3>Server usage</h3>
         <pre><code class="language-lua">local Remotes = require(ReplicatedStorage.Shared.Remotes)
 
-Remotes.Test.Ping:Connect(function(player, msg)
+Remotes.Test.Ping:OnEvent(function(player, msg)
   print(player.Name, msg)
 end)
 
@@ -114,7 +114,7 @@ end)</code></pre>
         <h3>Client usage</h3>
         <pre><code class="language-lua">local Remotes = require(ReplicatedStorage.Shared.Remotes)
 
-Remotes.Test.Ping:Fire("hello")
+Remotes.Test.Ping:FireServer("hello")
 local n = Remotes.Data.Get:InvokeServer("Cash")</code></pre>
 
         <h2>Functions</h2>
@@ -154,19 +154,19 @@ local n = Remotes.Data.Get:InvokeServer("Cash")</code></pre>
 
         <h2>Instance Methods</h2>
 
-        <h3>Connect</h3>
-        <p><code>sync:Connect(callback: (...any) -&gt; ()) -&gt; { Disconnect: () -&gt; () }?</code></p>
+        <h3>OnEvent</h3>
+        <p><code>sync:OnEvent(callback: (...any) -&gt; ()) -&gt; { Disconnect: () -&gt; () }?</code></p>
         <p>
-          Connects a handler to the endpoint’s events. For simplicity, <code>:Connect()</code> receives both reliable
+          Connects a handler to the endpoint’s events. For simplicity, <code>:OnEvent()</code> receives both reliable
           and unreliable event traffic.
         </p>
         <pre><code class="language-lua">-- Client
-sync:Connect(function(...)
+sync:OnEvent(function(...)
   print("Got", ...)
 end)
 
 -- Server
-sync:Connect(function(player, ...)
+sync:OnEvent(function(player, ...)
   print("From", player.Name, ...)
 end)</code></pre>
 
@@ -177,10 +177,10 @@ sync:OnInvoke(function(player, request)
   return { ok = true }
 end)</code></pre>
 
-        <h3>Fire</h3>
-        <p><code>sync:Fire(...any) -&gt; ()</code> <span class="badge">Client</span></p>
+        <h3>FireServer</h3>
+        <p><code>sync:FireServer(...any) -&gt; ()</code> <span class="badge">Client</span></p>
         <p>Fires client → server (drops if rate-limited or byte-limited).</p>
-        <pre><code class="language-lua">sync:Fire("hello")</code></pre>
+        <pre><code class="language-lua">sync:FireServer("hello")</code></pre>
 
         <h3>FireUnreliable</h3>
         <p><code>sync:FireUnreliable(...any) -&gt; ()</code> <span class="badge">Client</span></p>

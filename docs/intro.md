@@ -40,7 +40,7 @@ Server:
 ```lua
 local Ping = require(ReplicatedStorage.Shared.Ping)
 
-Ping:Connect(function(player, message)
+Ping:OnEvent(function(player, message)
 	print("Ping from", player.Name, message)
 end)
 ```
@@ -50,6 +50,6 @@ Client:
 ```lua
 local Ping = require(ReplicatedStorage.Shared.Ping)
 
-Ping:Fire("hello")
+Ping:FireServer("hello")
 ```
 
