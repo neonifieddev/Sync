@@ -12,7 +12,7 @@ Basic networking module for creating and handling static `RemoteEvent`s and `Rem
 > - `:Connect` → `:OnEvent`
 > - `:Fire` → `:FireServer`
 >
-> (Server → client methods remain `:FireAll`, `:FireClient`, etc.)
+> (Server → client methods remain `:FireAllClients`, `:FireClient`, etc.)
 
 ## One shared remote folder (important)
 
@@ -50,7 +50,7 @@ end)
 Server:
 
 ```lua
-PointsChanged:FireAll(10)
+PointsChanged:FireAllClients(10)
 ```
 
 ---
@@ -176,16 +176,16 @@ Invokes client → server (drops if rate-limited or byte-limited).
 local result = sync:InvokeServer("GetData")
 ```
 
-### `FireAll`
+### `FireAllClients`
 
 **Server**
 
-`sync:FireAll(...any) -> ()`
+`sync:FireAllClients(...any) -> ()`
 
 Fires to all players (per-player rate limiting; drops oversize payloads).
 
 ```lua
-sync:FireAll("announcement")
+sync:FireAllClients("announcement")
 ```
 
 ### `FireClient`

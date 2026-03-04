@@ -73,7 +73,7 @@ local PointsChanged = Sync:Create("PointsChanged")
 end)</code></pre>
 
         <h3>Server</h3>
-        <pre><code class="language-lua">PointsChanged:FireAll(10)</code></pre>
+        <pre><code class="language-lua">PointsChanged:FireAllClients(10)</code></pre>
 
         <h2>Recommended pattern: return a table of endpoints</h2>
         <p>
@@ -191,9 +191,9 @@ end)</code></pre>
         <p><code>sync:InvokeServer(...any) -&gt; ...any</code> <span class="badge">Client</span></p>
         <pre><code class="language-lua">local result = sync:InvokeServer("GetData")</code></pre>
 
-        <h3>FireAll</h3>
-        <p><code>sync:FireAll(...any) -&gt; ()</code> <span class="badge">Server</span></p>
-        <pre><code class="language-lua">sync:FireAll("announcement")</code></pre>
+        <h3>FireAllClients</h3>
+        <p><code>sync:FireAllClients(...any) -&gt; ()</code> <span class="badge">Server</span></p>
+        <pre><code class="language-lua">sync:FireAllClients("announcement")</code></pre>
 
         <h3>FireAllUnreliable</h3>
         <p><code>sync:FireAllUnreliable(...any) -&gt; ()</code> <span class="badge">Server</span></p>
