@@ -31,7 +31,15 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        run: |
+          npm run build
+          # Also publish the plain static site under /site/ (so /Sync/site/... works).
+          if [ -d "site" ]; then
+            rm -rf build/site
+            cp -r site build/site
+          fi
+          # Ensure GitHub Pages doesn't run Jekyll processing on the artifact.
+          touch build/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
