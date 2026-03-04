@@ -47,8 +47,7 @@
         <h2>One shared “Remotes” module</h2>
         <p>
           The recommended pattern is to define your endpoints in <strong>one shared module</strong> that both server and
-          client <code>require()</code>. Your game code should interact with <code>Remotes.Ping</code>, not
-          <code>ReplicatedStorage.Remotes</code> directly.
+          client <code>require()</code>. Your game code should interact with <code>Remotes.Ping</code>.
         </p>
 
         <pre><code class="language-lua">-- ReplicatedStorage/Shared/Remotes.luau
@@ -56,7 +55,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Sync = require(ReplicatedStorage.Packages.Sync)
 
 return {
-  Ping = Sync:Create("Ping"),
+  Test = Sync:Create("Test"),
+  Ping = Sync:Create("Hello.Ping"):SetByteLimit(64),
 }</code></pre>
 
         <h3>Client usage</h3>
@@ -78,11 +78,6 @@ Remotes.Ping:OnEvent(function(player, ...)
 end)
 
 Remotes.Ping:FireClient(player, "hi")</code></pre>
-
-        <p>
-          Under the hood, Sync stores the actual Roblox instances under <code>ReplicatedStorage.Remotes</code> (one
-          <code>RemoteEvent</code> + one <code>RemoteFunction</code> per endpoint name).
-        </p>
 
         <h2>Quick example</h2>
         <pre><code class="language-lua">local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -149,11 +144,8 @@ local n = Remotes.Data.Get:InvokeServer("Cash")</code></pre>
         <p><code>Sync:Create(name: string) -&gt; Sync</code></p>
         <p>Creates (or returns) a Sync endpoint.</p>
         <ul>
-          <li>
-            <strong>Server</strong>: creates the endpoint remotes under <code>ReplicatedStorage.Remotes</code>:
-            <code>RemoteEvent</code>, <code>UnreliableRemoteEvent</code>, and <code>RemoteFunction</code>.
-          </li>
-          <li><strong>Client</strong>: waits up to 10 seconds for the folder/remotes to exist.</li>
+          <li><strong>Server</strong>: creates the underlying endpoint instances if missing.</li>
+          <li><strong>Client</strong>: waits up to 10 seconds for the endpoint to exist.</li>
           <li><strong>Duplicate name</strong>: warns and returns the existing instance.</li>
         </ul>
         <pre><code>local sync = Sync:Create("Test.Ping")</code></pre>

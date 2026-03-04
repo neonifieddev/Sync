@@ -8,50 +8,48 @@ slug: /
 
 - **Rate limiting** (Throttle or Burst)
 - **Payload byte limiting** (fast estimate; oversized sends are dropped)
-- **One shared remote folder**: everything lives under `ReplicatedStorage.Remotes`
+- **One shared Remotes module**: define endpoints once and require them from both server and client
 
-## Single shared remote container (important)
+## One shared “Remotes” module (important)
 
-The important part is having **one shared “Remotes” module** (or endpoint registry) that both server and client `require()`, so endpoint names stay consistent.
+Define all endpoints in **one shared module** (endpoint registry) that both server and client `require()`.
 
-The `Sync` module itself must be placed somewhere both realms can `require()` (commonly `ReplicatedStorage.Packages.Sync`).
-
-- **Server** creates (if missing): `ReplicatedStorage.Remotes`
-- **Client** waits for: `ReplicatedStorage.Remotes`
-
-Every call to `Sync:Create("Some.Name")` uses that same folder, so you don’t need separate “server remotes” vs “client remotes”.
-
-## Minimal example
-
-Create an endpoint (do this in shared code so both server + client agree on names):
+Example:
 
 ```lua
+-- ReplicatedStorage/Shared/Remotes.luau
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Sync = require(ReplicatedStorage.Packages.Sync)
 
-local Ping = Sync:Create("Test.Ping")
-	:SetRateLimit(2)
-	:SetByteLimit(64)
-	:SetMode(Sync.Modes.Burst)
+return {
+	Test = Sync:Create("Test"),
+	Ping = Sync:Create("Hello.Ping"):SetByteLimit(64),
+}
+```
 
-return Ping
+## Minimal example
+
+Client:
+
+```lua
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = require(ReplicatedStorage.Shared.Remotes)
+
+Remotes.Ping:OnEvent(function(...)
+	print("Ping reply", ...)
+end)
+
+Remotes.Ping:FireServer("hello")
 ```
 
 Server:
 
 ```lua
-local Ping = require(ReplicatedStorage.Shared.Ping)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = require(ReplicatedStorage.Shared.Remotes)
 
-Ping:OnEvent(function(player, message)
+Remotes.Ping:OnEvent(function(player, message)
 	print("Ping from", player.Name, message)
 end)
-```
-
-Client:
-
-```lua
-local Ping = require(ReplicatedStorage.Shared.Ping)
-
-Ping:FireServer("hello")
 ```
 

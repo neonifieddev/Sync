@@ -17,7 +17,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Sync = require(ReplicatedStorage.Packages.Sync)
 
 return {
-	Ping = Sync:Create("Ping"),
+	Test = Sync:Create("Test"),
+	Ping = Sync:Create("Hello.Ping"):SetByteLimit(64),
 }
 ```
 
@@ -46,8 +47,6 @@ end)
 
 Remotes.Ping:FireClient(player, "hi")
 ```
-
-Under the hood, Sync stores the actual Roblox instances under `ReplicatedStorage.Remotes` (one `RemoteEvent` + one `RemoteFunction` per endpoint name).
 
 ## Quick example (examples only)
 
@@ -85,8 +84,8 @@ PointsChanged:FireAllClients(10)
 
 Creates (or returns) a Sync endpoint.
 
-- On the **server**, creates the `RemoteEvent` and `RemoteFunction` under `ReplicatedStorage.Remotes`.
-- On the **client**, waits up to 10 seconds for the folder/remotes to exist.
+- On the **server**, creates the underlying `RemoteEvent`/`RemoteFunction` if missing.
+- On the **client**, waits up to 10 seconds for the endpoint to exist.
 - If a Sync with the same name already exists, warns and returns the existing one.
 
 ```lua
