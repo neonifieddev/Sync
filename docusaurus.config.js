@@ -5,8 +5,8 @@ const darkCodeTheme = require("prism-react-renderer").themes.dracula;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Sync",
-  tagline: "Networking module (RemoteEvent + RemoteFunction) with rate + byte limiting",
+  title: "Neo's Utils",
+  tagline: "A small collection of Roblox utilities (Sync, Tween, and more)",
   favicon: "img/favicon.svg",
 
   url: "https://neonifieddev.github.io",
@@ -44,7 +44,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: "Sync",
+        title: "Neo's Utils",
         items: [
           {
             type: "docSidebar",

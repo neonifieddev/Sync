@@ -1,10 +1,19 @@
 ---
 sidebar_position: 1
-title: Sync
+title: Neo's Utils
 slug: /
 ---
 
-`Sync` is a small networking helper that pairs a `RemoteEvent` and a `RemoteFunction` per endpoint name, with:
+This site documents **Neo's Utils** — a small collection of Roblox utilities.
+
+## Modules
+
+- **Sync**: a networking helper built around RemoteEvents/RemoteFunctions, with rate + payload byte limiting.
+- **Tween**: a tween helper with extended support for Model `ScaleTo` and `PivotTo`.
+
+## Sync (quick overview)
+
+`Sync` pairs a `RemoteEvent` and a `RemoteFunction` per endpoint name, with:
 
 - **Rate limiting** (Throttle or Burst)
 - **Payload byte limiting** (fast estimate; oversized sends are dropped)
