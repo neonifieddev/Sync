@@ -4,8 +4,13 @@ const sidebars = {
     "intro",
     {
       type: "category",
-      label: "API",
-      items: ["api/sync", "api/tween"],
+      label: "Sync",
+      items: ["sync/intro", "sync/api"],
+    },
+    {
+      type: "category",
+      label: "Tween",
+      items: ["tween/intro", "tween/api"],
     },
   ],
 };

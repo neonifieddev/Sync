@@ -8,57 +8,18 @@ This site documents **Neo's Utils** — a small collection of Roblox utilities.
 
 ## Modules
 
-- **Sync**: a networking helper built around RemoteEvents/RemoteFunctions, with rate + payload byte limiting.
-- **Tween**: a tween helper with extended support for Model `ScaleTo` and `PivotTo`.
+- **Sync**: networking helper (events/functions, rate limiting, payload byte limiting).  
+  - Docs: `/sync`
+  - API: `/sync/api`
 
-## Sync (quick overview)
+- **Tween**: tween helper with Model-only extended properties like `Scale` and `Pivot`.  
+  - Docs: `/tween`
+  - API: `/tween/api`
 
-`Sync` pairs a `RemoteEvent` and a `RemoteFunction` per endpoint name, with:
+---
 
-- **Rate limiting** (Throttle or Burst)
-- **Payload byte limiting** (fast estimate; oversized sends are dropped)
-- **One shared Remotes module**: define endpoints once and require them from both server and client
+## Notes
 
-## One shared “Remotes” module (important)
-
-Define all endpoints in **one shared module** (endpoint registry) that both server and client `require()`.
-
-Example:
-
-```lua
--- ReplicatedStorage/Shared/Remotes.luau
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Sync = require(ReplicatedStorage.Packages.Sync)
-
-return {
-	Test = Sync:Create("Test"),
-	Ping = Sync:Create("Hello.Ping"):SetByteLimit(64),
-}
-```
-
-## Minimal example
-
-Client:
-
-```lua
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Remotes = require(ReplicatedStorage.Shared.Remotes)
-
-Remotes.Ping:OnEvent(function(...)
-	print("Ping reply", ...)
-end)
-
-Remotes.Ping:FireServer("hello")
-```
-
-Server:
-
-```lua
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Remotes = require(ReplicatedStorage.Shared.Remotes)
-
-Remotes.Ping:OnEvent(function(player, message)
-	print("Ping from", player.Name, message)
-end)
-```
+- Each module has its own section. The homepage is just an index.
+- If you want another util documented, drop the module code and I’ll add it here.
 
